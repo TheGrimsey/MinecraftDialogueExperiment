@@ -1,0 +1,31 @@
+{
+  "entries": {
+    "entry": {
+      "speaker": "Toms",
+      "text": "I have killed gods. What have you done?",
+      "responses": [
+        {
+          "text": "Made soup",
+          "targetNode": "soup"
+        },
+        {
+          "text": "Nothing",
+          "targetNode": "nothing",
+          "condition": {
+            "type": "apoli:in_rain"
+          }
+        }
+      ]
+    },
+    "soup": {
+      "speaker": "Toms",
+      "text": "Ah fair enough.",
+      "responses": []
+    },
+    "nothing": {
+      "speaker": "Toms",
+      "text": "Exactly.",
+      "responses": []
+    }
+  }
+}
