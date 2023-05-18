@@ -1,9 +1,13 @@
-# Fabric Example Mod
+# Minecraft Dialogue Experiment
 
-## Setup
+Experiment in making a dialogue system for a server with friends. Dialogues are loaded from ``data/dialogues`` check the test & test2 files in the repo for structure.
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+## This doesn't build.
+
+Yeah, that's an issue with the version of AdditionalAttributes that Apoli depends on. I just grab the latest 1.18 jar from AdditionalAttributes' github releases and chuck it into gradle cache.
+
+It works and I too lazy to solve it better.
 
 ## License
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+Available under MIT.
