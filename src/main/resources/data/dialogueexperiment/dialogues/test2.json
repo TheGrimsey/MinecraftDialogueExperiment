@@ -16,10 +16,11 @@
       "responses": [
         {
           "text": "Branch A",
-          "targetNode": "branch_a",
-          "commands": [
-            "execute as --player-- run summon lightning_bolt ~ ~ ~"
-          ]
+          "targetNode": "branch_a"
+        },
+        {
+          "text": "Branch B",
+          "targetNode": "branch_b"
         }
       ]
     },
