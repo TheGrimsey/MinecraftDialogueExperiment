@@ -24,7 +24,7 @@ public class DialogueScreenHandler extends ScreenHandler {
     @Environment(EnvType.CLIENT)
     String speaker;
     @Environment(EnvType.CLIENT)
-    Text text;
+    List<Text> texts = new ArrayList<>();
     @Environment(EnvType.CLIENT)
     List<Text> responses = new ArrayList<>();
 
@@ -55,11 +55,15 @@ public class DialogueScreenHandler extends ScreenHandler {
     @Environment(EnvType.CLIENT)
     public void readFromBuffer(PacketByteBuf buf) {
         this.speaker = buf.readString();
-        this.text = buf.readText();
+        this.texts.clear();
+        final int textLinesCount = buf.readVarInt();
+        for(int i = 0; i < textLinesCount; i++) {
+            texts.add(buf.readText());
+        }
 
         this.responses.clear();
-        final int count = buf.readVarInt();
-        for(int i = 0; i < count; i++) {
+        final int responsesCount = buf.readVarInt();
+        for(int i = 0; i < responsesCount; i++) {
             responses.add(buf.readText());
         }
     }
@@ -98,7 +102,12 @@ public class DialogueScreenHandler extends ScreenHandler {
 
     public void writeActiveNode(PacketByteBuf buf) {
         buf.writeString(activeNode.speaker());
-        buf.writeText(DialogueTextFormatter.formatText(activeNode.text(), player));
+
+        buf.writeVarInt(activeNode.text().size());
+        for (String text : activeNode.text()) {
+            buf.writeText(DialogueTextFormatter.formatText(text, player));
+        }
+
         buf.writeVarInt(possibleResponses.size());
         for (DialogueResponse possibleResponse : possibleResponses) {
             buf.writeText(DialogueTextFormatter.formatText(possibleResponse.text(), player));

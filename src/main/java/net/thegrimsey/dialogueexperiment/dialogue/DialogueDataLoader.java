@@ -46,7 +46,15 @@ public class DialogueDataLoader implements SimpleSynchronousResourceReloadListen
                     var value = stringJsonElementEntry.getValue().getAsJsonObject();
 
                     String speaker = value.get("speaker").getAsString();
-                    String text = value.get("text").getAsString();
+
+                    List<String> texts = new ArrayList<>();
+
+                    if(value.has("text")) {
+                        String text = value.get("text").getAsString();
+                        texts.add(text);
+                    } else if(value.has("texts")) {
+                        value.getAsJsonArray("texts").forEach(jsonElement -> texts.add(jsonElement.getAsString()));
+                    }
 
                     List<DialogueResponse> responses = new ArrayList<>();
 
@@ -82,7 +90,7 @@ public class DialogueDataLoader implements SimpleSynchronousResourceReloadListen
                         responses.add(new DialogueResponse(responseText, targetNode, condition, commands));
                     });
 
-                    nodes.put(key, new DialogueNode(speaker, text, responses));
+                    nodes.put(key, new DialogueNode(speaker, texts, responses));
                 });
 
                 Identifier shortenedId = new Identifier(id.getNamespace(), id.getPath().substring(STARTING_PATH.length() + 1, id.getPath().length() - EXTENSION.length()));

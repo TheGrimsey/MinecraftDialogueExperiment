@@ -8,7 +8,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.thegrimsey.dialogueexperiment.DialogueExperiment;
 import net.thegrimsey.dialogueexperiment.DialogueNetworking;
 
 import java.util.ArrayList;
@@ -70,7 +69,14 @@ public class DialogueScreen extends HandledScreen<DialogueScreenHandler> {
         textWidth = (int)(this.width * 0.7f);
         textX = (float)(this.width - textWidth) / 2.0f;
 
-        wrappedDialogue = textRenderer.wrapLines(handler.text, textWidth);
+        wrappedDialogue.clear();
+        for(Text line : handler.texts) {
+            if(line.asString().isEmpty()) {
+                wrappedDialogue.add(OrderedText.EMPTY);
+            } else {
+                wrappedDialogue.addAll(textRenderer.wrapLines(line, textWidth));
+            }
+        }
 
         this.clearChildren();
 

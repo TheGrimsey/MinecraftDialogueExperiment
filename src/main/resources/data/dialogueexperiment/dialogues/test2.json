@@ -60,7 +60,11 @@
     },
     "branch_b": {
       "speaker": "§6§kSoup",
-      "text": "We can also add conditional responses using apoli. The second response here is only visible in rain.",
+      "texts": [
+        "We can also add conditional responses using apoli.",
+        "",
+        "The second response here is only visible in rain."
+      ],
       "responses": [
         {
           "text": "I am done here.",
