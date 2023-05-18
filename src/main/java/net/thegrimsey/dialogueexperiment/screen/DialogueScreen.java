@@ -70,7 +70,7 @@ public class DialogueScreen extends HandledScreen<DialogueScreenHandler> {
         textWidth = (int)(this.width * 0.7f);
         textX = (float)(this.width - textWidth) / 2.0f;
 
-        wrappedDialogue = textRenderer.wrapLines(Text.of(handler.text), textWidth);
+        wrappedDialogue = textRenderer.wrapLines(handler.text, textWidth);
 
         this.clearChildren();
 
@@ -84,7 +84,7 @@ public class DialogueScreen extends HandledScreen<DialogueScreenHandler> {
             int y = this.height - buttonsHeightOffset + i * (buttonHeight + buttonMargin);
 
             final int finalI = i;
-            addDrawableChild(new ButtonWidget(x, y, textWidth, buttonHeight, Text.of(handler.responses.get(i)), button -> {
+            addDrawableChild(new ButtonWidget(x, y, textWidth, buttonHeight, handler.responses.get(i), button -> {
                 onPressResponse(finalI);
             }));
         }

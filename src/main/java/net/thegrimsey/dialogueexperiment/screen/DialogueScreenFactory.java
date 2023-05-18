@@ -7,7 +7,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.thegrimsey.dialogueexperiment.Dialogue;
+import net.thegrimsey.dialogueexperiment.dialogue.Dialogue;
 import org.jetbrains.annotations.Nullable;
 
 public class DialogueScreenFactory implements ExtendedScreenHandlerFactory {

@@ -11,6 +11,10 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.thegrimsey.dialogueexperiment.*;
+import net.thegrimsey.dialogueexperiment.dialogue.Dialogue;
+import net.thegrimsey.dialogueexperiment.dialogue.DialogueNode;
+import net.thegrimsey.dialogueexperiment.dialogue.DialogueResponse;
+import net.thegrimsey.dialogueexperiment.dialogue.DialogueTextFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +24,9 @@ public class DialogueScreenHandler extends ScreenHandler {
     @Environment(EnvType.CLIENT)
     String speaker;
     @Environment(EnvType.CLIENT)
-    String text;
+    Text text;
     @Environment(EnvType.CLIENT)
-    List<String> responses = new ArrayList<>();
+    List<Text> responses = new ArrayList<>();
 
     // Server side.
     ServerPlayerEntity player;
@@ -51,12 +55,12 @@ public class DialogueScreenHandler extends ScreenHandler {
     @Environment(EnvType.CLIENT)
     public void readFromBuffer(PacketByteBuf buf) {
         this.speaker = buf.readString();
-        this.text = buf.readString();
+        this.text = buf.readText();
 
         this.responses.clear();
         final int count = buf.readVarInt();
         for(int i = 0; i < count; i++) {
-            responses.add(buf.readString());
+            responses.add(buf.readText());
         }
     }
 
@@ -94,10 +98,10 @@ public class DialogueScreenHandler extends ScreenHandler {
 
     public void writeActiveNode(PacketByteBuf buf) {
         buf.writeString(activeNode.speaker());
-        buf.writeString(activeNode.text());
+        buf.writeText(DialogueTextFormatter.formatText(activeNode.text(), player));
         buf.writeVarInt(possibleResponses.size());
         for (DialogueResponse possibleResponse : possibleResponses) {
-            buf.writeString(possibleResponse.text());
+            buf.writeText(DialogueTextFormatter.formatText(possibleResponse.text(), player));
         }
     }
 
@@ -105,7 +109,22 @@ public class DialogueScreenHandler extends ScreenHandler {
         if(chosenResponse >= 0 && chosenResponse < possibleResponses.size()) {
             DialogueResponse response = possibleResponses.get(chosenResponse);
 
-            DialogueNode newNode = dialogue.nodes().get(response.targetNode());
+            if(response.commands().isPresent()) {
+                List<String> commands = response.commands().get();
+
+                commands.forEach(command -> {
+                    String formattedCommand = command.replace("--player--", player.getGameProfile().getName());
+                    player.server.getCommandManager().execute(player.server.getCommandSource().withWorld(player.getWorld()).withPosition(player.getPos()).withRotation(player.getRotationClient()), formattedCommand);
+                });
+            }
+            String targetNode = response.targetNode();
+            if(targetNode.isEmpty()){
+                player.closeHandledScreen();
+                return;
+            }
+
+            DialogueNode newNode = dialogue.nodes().get(targetNode);
+
             if(newNode != null) {
                 switchToNode(newNode, true);
             } else {

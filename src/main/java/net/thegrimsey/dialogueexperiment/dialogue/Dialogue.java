@@ -1,4 +1,4 @@
-package net.thegrimsey.dialogueexperiment;
+package net.thegrimsey.dialogueexperiment.dialogue;
 
 import java.util.HashMap;
 

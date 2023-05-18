@@ -1,31 +1,56 @@
 {
   "entries": {
     "entry": {
-      "speaker": "Toms",
-      "text": "I have killed gods. What have you done?",
+      "speaker": "§kThe World-Eater",
+      "text": "Who are §oyou?",
       "responses": [
         {
-          "text": "Made soup",
-          "targetNode": "soup"
+          "text": "I am %player:displayname_visual%.",
+          "targetNode": "named"
         },
         {
-          "text": "Nothing",
+          "text": "I am no one.",
           "targetNode": "nothing",
-          "condition": {
-            "type": "apoli:in_rain"
-          }
+          "commands": [
+            "execute as --player-- run summon minecraft:lightning_bolt ~ ~ ~"
+          ]
         }
       ]
     },
-    "soup": {
-      "speaker": "Toms",
-      "text": "Ah fair enough.",
+    "named": {
+      "speaker": "§kThe World-Eater",
+      "text": "I greet you, %player:displayname_visual%.",
       "responses": []
     },
     "nothing": {
-      "speaker": "Toms",
-      "text": "Exactly.",
-      "responses": []
+      "speaker": "§kThe World-Eater",
+      "text": "You are not. Do not lie to me, mortal. §o§lWhat is your name?",
+      "responses": [
+        {
+          "text": "No one.",
+          "targetNode": "no_one",
+          "commands": [
+            "execute as --player-- run summon cow ~ ~ ~"
+          ]
+        },
+        {
+          "text": "%player:displayname_visual%.",
+          "targetNode": "named"
+        }
+      ]
+    },
+    "no_one": {
+      "speaker": "§kThe World-Eater",
+      "text": "Very well. I gave you your chance.",
+      "responses": [
+        {
+          "text": "...",
+          "targetNode": "",
+          "commands": [
+            "execute as --player-- run summon lightning_bolt ~ ~ ~"
+          ]
+        }
+      ]
     }
   }
 }
