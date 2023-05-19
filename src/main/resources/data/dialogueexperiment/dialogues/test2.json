@@ -1,8 +1,26 @@
 {
   "entries": {
     "entry": {
-      "speaker": "Name of Speaker",
-      "text": "Dialogue test.",
+      "pages": [
+        {
+          "speaker": "Name of Speaker",
+          "lines": [
+            "Dialogue test."
+          ]
+        },
+        {
+          "speaker": "Name of Speaker",
+          "lines": [
+            "This is the second page..."
+          ]
+        },
+        {
+          "speaker": "Name of Speaker",
+          "lines": [
+            "This is the third."
+          ]
+        }
+      ],
       "responses": [
         {
           "text": "Response!",
@@ -11,8 +29,14 @@
       ]
     },
     "named": {
-      "speaker": "§lBold Speaker Name",
-      "text": "Using Text Placeholder API for text: %player:displayname_visual%, TPS: %server:tps%",
+      "pages": [
+        {
+          "speaker": "§lBold Speaker Name",
+          "lines": [
+            "Using Text Placeholder API for text: %player:displayname_visual%, TPS: %server:tps%"
+          ]
+        }
+      ],
       "responses": [
         {
           "text": "Branch A",
@@ -25,8 +49,14 @@
       ]
     },
     "branch_a": {
-      "speaker": "§kObfuscated Speaker",
-      "text": "This is branch A, we could return to B if we'd like. We can also execute commands.",
+      "pages": [
+        {
+          "speaker": "§kObfuscated Speaker",
+          "lines": [
+            "This is branch A, we could return to B if we'd like. We can also execute commands."
+          ]
+        }
+      ],
       "responses": [
         {
           "text": "Kaboom!",
@@ -42,8 +72,14 @@
       ]
     },
     "kaboom": {
-      "speaker": "§9Blue",
-      "text": "Kaboom!",
+      "pages": [
+        {
+          "speaker": "§9Blue",
+          "lines": [
+            "Kaboom!"
+          ]
+        }
+      ],
       "responses": [
         {
           "text": "Kaboom!",
@@ -59,11 +95,15 @@
       ]
     },
     "branch_b": {
-      "speaker": "§6§kSoup",
-      "texts": [
-        "We can also add conditional responses using apoli.",
-        "",
-        "The second response here is only visible in rain."
+      "pages": [
+        {
+          "speaker": "§6§kSoup",
+          "lines": [
+            "We can also add conditional responses using apoli.",
+            "",
+            "The second response here is only visible in rain."
+          ]
+        }
       ],
       "responses": [
         {
@@ -83,8 +123,15 @@
       ]
     },
     "no_rain": {
-      "speaker": "§6§kSoup",
-      "text": "Stopping the rain! Now when we return to branch B the second option will be gone.",
+      "pages": [
+        {
+          "speaker": "§6§kSoup",
+          "lines": [
+            "Stopping the rain!",
+            "Now when we return to branch B the second option will be gone."
+          ]
+        }
+      ],
       "responses": [
         {
           "text": "Back to B!",

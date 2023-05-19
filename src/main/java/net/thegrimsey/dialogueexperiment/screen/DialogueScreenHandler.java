@@ -11,10 +11,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.thegrimsey.dialogueexperiment.*;
-import net.thegrimsey.dialogueexperiment.dialogue.Dialogue;
-import net.thegrimsey.dialogueexperiment.dialogue.DialogueNode;
-import net.thegrimsey.dialogueexperiment.dialogue.DialogueResponse;
-import net.thegrimsey.dialogueexperiment.dialogue.DialogueTextFormatter;
+import net.thegrimsey.dialogueexperiment.dialogue.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +19,10 @@ import java.util.List;
 public class DialogueScreenHandler extends ScreenHandler {
 
     @Environment(EnvType.CLIENT)
-    String speaker;
+    List<FormattedDialoguePage> pages = new ArrayList<>();
     @Environment(EnvType.CLIENT)
-    List<Text> texts = new ArrayList<>();
+    int currentPage = 0;
+
     @Environment(EnvType.CLIENT)
     List<Text> responses = new ArrayList<>();
 
@@ -53,12 +51,31 @@ public class DialogueScreenHandler extends ScreenHandler {
     }
 
     @Environment(EnvType.CLIENT)
+    public boolean isFinalPage() {
+        return currentPage == (this.pages.size() - 1);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public FormattedDialoguePage getCurrentPage() {
+        return this.pages.get(this.currentPage);
+    }
+
+    @Environment(EnvType.CLIENT)
     public void readFromBuffer(PacketByteBuf buf) {
-        this.speaker = buf.readString();
-        this.texts.clear();
-        final int textLinesCount = buf.readVarInt();
-        for(int i = 0; i < textLinesCount; i++) {
-            texts.add(buf.readText());
+        this.currentPage = 0;
+        this.pages.clear();
+
+        final int pageCount = buf.readVarInt();
+        for(int i = 0; i < pageCount; i++) {
+            Text speaker = buf.readText();
+            final int lineCount = buf.readVarInt();
+            List<Text> lines = new ArrayList<>(lineCount);
+
+            for(int j = 0; j < lineCount; j++) {
+                lines.add(buf.readText());
+            }
+
+            this.pages.add(new FormattedDialoguePage(speaker, lines));
         }
 
         this.responses.clear();
@@ -68,12 +85,23 @@ public class DialogueScreenHandler extends ScreenHandler {
         }
     }
 
-    @Override
-    public boolean canUse(PlayerEntity player) {
-        return true;
+    // SERVER SIDE.
+    public void writeActiveNode(PacketByteBuf buf) {
+        buf.writeVarInt(activeNode.pages().size());
+        for(DialoguePage page : activeNode.pages()) {
+            buf.writeText(DialogueTextFormatter.formatText(page.speaker(), player));
+            buf.writeVarInt(page.lines().size());
+            for (String text : page.lines()) {
+                buf.writeText(DialogueTextFormatter.formatText(text, player));
+            }
+        }
+
+        buf.writeVarInt(possibleResponses.size());
+        for (DialogueResponse possibleResponse : possibleResponses) {
+            buf.writeText(DialogueTextFormatter.formatText(possibleResponse.text(), player));
+        }
     }
 
-    // SERVER SIDE.
     void switchToNode(DialogueNode node, boolean send) {
         activeNode = node;
 
@@ -99,21 +127,6 @@ public class DialogueScreenHandler extends ScreenHandler {
             ServerPlayNetworking.send(this.player, DialogueNetworking.SEND_DIALOGUE, buf);
         }
     }
-
-    public void writeActiveNode(PacketByteBuf buf) {
-        buf.writeString(activeNode.speaker());
-
-        buf.writeVarInt(activeNode.text().size());
-        for (String text : activeNode.text()) {
-            buf.writeText(DialogueTextFormatter.formatText(text, player));
-        }
-
-        buf.writeVarInt(possibleResponses.size());
-        for (DialogueResponse possibleResponse : possibleResponses) {
-            buf.writeText(DialogueTextFormatter.formatText(possibleResponse.text(), player));
-        }
-    }
-
     public void selectResponse(int chosenResponse) {
         if(chosenResponse >= 0 && chosenResponse < possibleResponses.size()) {
             DialogueResponse response = possibleResponses.get(chosenResponse);
@@ -142,5 +155,11 @@ public class DialogueScreenHandler extends ScreenHandler {
         } else {
             player.sendMessage(Text.of("Invalid choice."), false);
         }
+    }
+
+
+    @Override
+    public boolean canUse(PlayerEntity player) {
+        return true;
     }
 }

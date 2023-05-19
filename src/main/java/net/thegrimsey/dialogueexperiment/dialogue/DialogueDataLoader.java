@@ -40,21 +40,27 @@ public class DialogueDataLoader implements SimpleSynchronousResourceReloadListen
 
                 JsonObject jsonObject = JsonHelper.deserialize(reader);
 
-                HashMap<String, DialogueNode> nodes = new HashMap<>();
-                jsonObject.getAsJsonObject("entries").entrySet().forEach(stringJsonElementEntry -> {
+                var entries = jsonObject.getAsJsonObject("entries");
+                HashMap<String, DialogueNode> nodes = new HashMap<>(entries.size());
+                entries.entrySet().forEach(stringJsonElementEntry -> {
                     var key = stringJsonElementEntry.getKey();
                     var value = stringJsonElementEntry.getValue().getAsJsonObject();
 
-                    String speaker = value.get("speaker").getAsString();
+                    var jsonPages = value.getAsJsonArray("pages");
+                    List<DialoguePage> pages = new ArrayList<>(jsonPages.size());
 
-                    List<String> texts = new ArrayList<>();
+                    jsonPages.forEach(jsonElement -> {
+                        var asObject = jsonElement.getAsJsonObject();
 
-                    if(value.has("text")) {
-                        String text = value.get("text").getAsString();
-                        texts.add(text);
-                    } else if(value.has("texts")) {
-                        value.getAsJsonArray("texts").forEach(jsonElement -> texts.add(jsonElement.getAsString()));
-                    }
+                        var jsonTextLines = asObject.getAsJsonArray("lines");
+
+                        String speaker = asObject.get("speaker").getAsString();
+                        List<String> textLines = new ArrayList<>(jsonTextLines.size());
+
+                        jsonTextLines.forEach(textLine -> textLines.add(textLine.getAsString()));
+
+                        pages.add(new DialoguePage(speaker, textLines));
+                    });
 
                     List<DialogueResponse> responses = new ArrayList<>();
 
@@ -81,7 +87,7 @@ public class DialogueDataLoader implements SimpleSynchronousResourceReloadListen
                         if(asObject.has("commands")) {
                             var commandsJson = asObject.getAsJsonArray("commands");
 
-                            List<String> commandsList = new ArrayList<>();
+                            List<String> commandsList = new ArrayList<>(commandsJson.size());
                             commandsJson.forEach(commandElement -> commandsList.add(commandElement.getAsString()));
 
                             commands = Optional.of(commandsList);
@@ -90,7 +96,7 @@ public class DialogueDataLoader implements SimpleSynchronousResourceReloadListen
                         responses.add(new DialogueResponse(responseText, targetNode, condition, commands));
                     });
 
-                    nodes.put(key, new DialogueNode(speaker, texts, responses));
+                    nodes.put(key, new DialogueNode(pages, responses));
                 });
 
                 Identifier shortenedId = new Identifier(id.getNamespace(), id.getPath().substring(STARTING_PATH.length() + 1, id.getPath().length() - EXTENSION.length()));
