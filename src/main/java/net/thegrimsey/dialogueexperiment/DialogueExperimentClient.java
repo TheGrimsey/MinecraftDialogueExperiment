@@ -8,5 +8,7 @@ public class DialogueExperimentClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ScreenRegistry.register(DialogueExperiment.DIALOGUE_SCREENHANDLER, DialogueScreen::new);
+
+        DialogueNetworkingClient.registerNetworking();
     }
 }

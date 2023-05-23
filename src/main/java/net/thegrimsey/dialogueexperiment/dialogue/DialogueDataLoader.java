@@ -14,6 +14,7 @@ import net.thegrimsey.dialogueexperiment.dialogue.DialogueResponse;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +35,10 @@ public class DialogueDataLoader implements SimpleSynchronousResourceReloadListen
     public void reload(ResourceManager manager) {
         dialogues.clear();
 
+
         for(Identifier id: manager.findResources(STARTING_PATH, path -> path.endsWith(EXTENSION))) {
             try(InputStream stream = manager.getResource(id).getInputStream()) {
-                InputStreamReader reader = new InputStreamReader(stream);
+                InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
 
                 JsonObject jsonObject = JsonHelper.deserialize(reader);
 

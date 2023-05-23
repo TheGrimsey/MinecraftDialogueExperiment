@@ -65,10 +65,11 @@ public class DialogueScreenHandler extends ScreenHandler {
         this.currentPage = 0;
         this.pages.clear();
 
-        final int pageCount = buf.readVarInt();
+        final int pageCount = buf.readInt();
         for(int i = 0; i < pageCount; i++) {
-            Text speaker = buf.readText();
-            final int lineCount = buf.readVarInt();
+            Text speaker = Text.of(buf.readString());
+            DialogueExperiment.LOGGER.info(speaker.getString());
+            final int lineCount = buf.readInt();
             List<Text> lines = new ArrayList<>(lineCount);
 
             for(int j = 0; j < lineCount; j++) {
@@ -79,7 +80,7 @@ public class DialogueScreenHandler extends ScreenHandler {
         }
 
         this.responses.clear();
-        final int responsesCount = buf.readVarInt();
+        final int responsesCount = buf.readInt();
         for(int i = 0; i < responsesCount; i++) {
             responses.add(buf.readText());
         }
@@ -87,16 +88,18 @@ public class DialogueScreenHandler extends ScreenHandler {
 
     // SERVER SIDE.
     public void writeActiveNode(PacketByteBuf buf) {
-        buf.writeVarInt(activeNode.pages().size());
+        buf.writeInt(activeNode.pages().size());
         for(DialoguePage page : activeNode.pages()) {
-            buf.writeText(DialogueTextFormatter.formatText(page.speaker(), player));
-            buf.writeVarInt(page.lines().size());
+            var speaker = DialogueTextFormatter.formatText(page.speaker(), player).getString();
+            DialogueExperiment.LOGGER.info("Raw: {}, Writing: {}", page.speaker(), speaker);
+            buf.writeString(speaker);
+            buf.writeInt(page.lines().size());
             for (String text : page.lines()) {
                 buf.writeText(DialogueTextFormatter.formatText(text, player));
             }
         }
 
-        buf.writeVarInt(possibleResponses.size());
+        buf.writeInt(possibleResponses.size());
         for (DialogueResponse possibleResponse : possibleResponses) {
             buf.writeText(DialogueTextFormatter.formatText(possibleResponse.text(), player));
         }

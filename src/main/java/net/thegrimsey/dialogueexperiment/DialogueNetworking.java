@@ -20,14 +20,7 @@ public class DialogueNetworking {
     public static void registerNetworking() {
         ServerPlayNetworking.registerGlobalReceiver(CHOOSE_RESPONSE, CHOOSE_RESPONSE_CHANNEL_HANDLER);
 
-        ClientPlayNetworking.registerGlobalReceiver(SEND_DIALOGUE, (client, handler, buf, responseSender) -> {
-            if(client.player.currentScreenHandler instanceof DialogueScreenHandler screenHandler) {
-                screenHandler.readFromBuffer(buf);
-                if(client.currentScreen instanceof DialogueScreen dialogueScreen) {
-                    dialogueScreen.reinit();
-                }
-            }
-        });
+
     }
 
     @Environment(EnvType.CLIENT)

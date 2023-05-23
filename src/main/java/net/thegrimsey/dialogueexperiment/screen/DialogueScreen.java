@@ -104,17 +104,19 @@ public class DialogueScreen extends HandledScreen<DialogueScreenHandler> {
         this.clearChildren();
 
         if(handler.isFinalPage()) {
+            final int MAX_BUTTON_WIDTH = 390;
+            final int buttonWidth = Math.min(textWidth, MAX_BUTTON_WIDTH);
             final int buttonHeight = 20;
             final int buttonMargin = 2;
 
             buttonsHeightOffset = handler.responses.size() * (buttonHeight + buttonMargin) + 10;
 
             for(int i = 0; i < handler.responses.size(); i++) {
-                int x = (int)textX;
+                int x = (int)textX + (textWidth - buttonWidth) / 2;
                 int y = this.height - buttonsHeightOffset + i * (buttonHeight + buttonMargin);
 
                 final int finalI = i;
-                addDrawableChild(new ButtonWidget(x, y, textWidth, buttonHeight, handler.responses.get(i), button -> {
+                addDrawableChild(new ButtonWidget(x, y, buttonWidth, buttonHeight, handler.responses.get(i), button -> {
                     onPressResponse(finalI);
                 }));
             }
